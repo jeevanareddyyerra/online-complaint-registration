@@ -339,6 +339,13 @@ const ChatPage = () => {
                   </div>
                 )}
 
+                 {/* Warning if socket is disconnected */}
+                {!socketConnected && (
+                  <div className="text-warning small mb-1 px-1">
+                    ⚠️ Realtime connection is reconnecting...
+                  </div>
+                )}
+
                 <form onSubmit={handleSend} className="d-flex gap-2">
                   <input
                     type="file"
@@ -346,13 +353,13 @@ const ChatPage = () => {
                     onChange={handleFileChange}
                     style={{ display: 'none' }}
                     accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx"
-                    disabled={!socketConnected || uploading}
+                    disabled={uploading}
                   />
                   <button
                     type="button"
                     className="btn btn-outline-secondary px-3"
                     onClick={() => fileInputRef.current?.click()}
-                    disabled={!socketConnected || uploading}
+                    disabled={uploading}
                     title="Attach File"
                   >
                     📎
@@ -363,11 +370,11 @@ const ChatPage = () => {
                     placeholder="Type your message here..."
                     value={messageText}
                     onChange={(e) => setMessageText(e.target.value)}
-                    disabled={!socketConnected || uploading}
+                    disabled={uploading}
                   />
                   <button
                     type="submit"
-                    disabled={!socketConnected || uploading || (!messageText.trim() && !selectedFile)}
+                    disabled={uploading || (!messageText.trim() && !selectedFile)}
                     className="btn btn-gradient px-4 py-2 fw-semibold d-flex align-items-center"
                   >
                     {uploading ? 'Sending...' : 'Send'}
