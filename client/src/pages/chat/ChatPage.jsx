@@ -71,6 +71,11 @@ const ChatPage = () => {
     const socket = initiateSocket(token);
     socket.connect();
 
+    if (socket.connected) {
+      setSocketConnected(true);
+      socket.emit('joinRoom', { complaintId });
+    }
+
     socket.on('connect', () => {
       setSocketConnected(true);
       socket.emit('joinRoom', { complaintId });
@@ -90,7 +95,7 @@ const ChatPage = () => {
 
     socket.on('connect_error', (err) => {
       console.error('Socket connection error:', err.message);
-      toast.error('Real-time connection error.');
+      setSocketConnected(false);
     });
 
     return () => {
@@ -100,7 +105,6 @@ const ChatPage = () => {
         socket.off('disconnect');
         socket.off('receiveMessage');
         socket.off('connect_error');
-        disconnectSocket();
       }
     };
   }, [complaintId]);
