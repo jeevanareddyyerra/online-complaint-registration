@@ -28,10 +28,20 @@ const initSocket = (server) => {
       }
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await User.findById(decoded.id).select('-password');
+      console.log("Socket auth decoded payload:", decoded);
+
+      const userId = decoded.id || decoded._id || decoded.userId;
+      if (!userId) {
+        console.error('Socket auth failed: No user ID in decoded payload.', decoded);
+        return next(new Error('Authentication error. Invalid token payload.'));
+      }
+
+      const user = await User.findById(userId).select('-password');
       if (!user) {
         return next(new Error('Authentication error. User not found.'));
       }
+
+      console.log("Socket authenticated user:", user._id);
 
       socket.user = user;
       next();
